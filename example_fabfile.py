@@ -6,7 +6,7 @@ base.fabbase.APP_REPO = 'git://github.com/peter-the-tea-drinker/tornado-base-exa
 base.fabbase.APP_TAG = ''
 
 base.fabbase.STAGE_APP_DIR = '~/stage.example.com'
-base.fabbase.PROD_APP_DIR = '~/prod.eexample.com'
+base.fabbase.PROD_APP_DIR = '~/prod.example.com'
 
 base.fabbase.BASE_DIR = '~/tornado-base'
 base.fabbase.BASE_REPO = 'git://github.com/peter-the-tea-drinker/tornado-base.git'
