@@ -15,6 +15,6 @@ class HelloHandler(tornado.web.RequestHandler):
     def get(self):
         self.write("Hello, world!")
 
-urls = [(r"/", HelloHandler)])
+urls = [(r"/", HelloHandler)]
 application = tornado.wsgi.WSGIApplication(urls)
 
