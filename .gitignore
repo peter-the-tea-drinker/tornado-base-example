@@ -1,4 +1,4 @@
 *.pyc
 *.so
-fabfile.py
+secrets.py
 *.DS_Store

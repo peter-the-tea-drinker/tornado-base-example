@@ -1,20 +1,6 @@
-import sys, os
-INTERP = os.path.expanduser("~/env/bin/python")
+import config
+INTERP = os.path.expanduser(config.VIRTUAL_ENV)
 if sys.executable != INTERP: os.execl(INTERP, INTERP, *sys.argv)
-
-
-#import sys,os.path
-#sys.path.append(os.path.expanduser('~/tornado-base'))
-#from base.passenger_wsgi_base import *
-
-import tornado.ioloop
-import tornado.web
-import tornado.wsgi
-
-class HelloHandler(tornado.web.RequestHandler):
-    def get(self):
-        self.write("Hello, world!")
-
-urls = [(r"/", HelloHandler)]
-application = tornado.wsgi.WSGIApplication(urls)
+import main, base.appbase
+application = base.appbase.wsgi_app(main.urls,cookie_secret=config.COOKIE_SECRET)
 

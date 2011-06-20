@@ -1,0 +1,19 @@
+<html>
+   <head>
+      <title>Blog Index</title>
+   </head>
+   <body>
+       hello, {{name}}
+       <h1>Blog Index</h1>
+     <ul>
+       {% for item in blogs %}
+       <li><a href="{{item.slug}}">{{ escape(item.title) }}</a></li>
+       {% end %}
+   </ul>
+   <form action="{{path}}" method="post">
+    <input type="text" name="title">
+    <input type="textarea" name="message">
+    <input type="submit" value="Submit">
+    </form>
+   </body>
+ </html>
