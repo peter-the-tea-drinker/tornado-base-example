@@ -9,7 +9,7 @@ class Blog(orm.Base):
     #html = Column(UnicodeText)
     title = s.Column(s.String(50))
     slug = s.Column(s.String(50),unique=True)
-    html = s.Column(s.Text)
+    html = s.Column(s.UnicodeText)
     def __init__(self, title, html, slug = None):
         import tornado.escape
         self.html = html
@@ -18,7 +18,7 @@ class Blog(orm.Base):
             slug = tornado.escape.url_escape(title)
         self.slug = slug
     def __repr__(self):
-        return str(self.html)
+        return self.html
 
 import tornado.web
 class BlogIndex(tornado.web.RequestHandler):
@@ -40,8 +40,8 @@ class BlogIndex(tornado.web.RequestHandler):
 class BlogHandler(tornado.web.RequestHandler):
     def get(self,entry):
         import tornado.escape
-        #slug = tornado.escape.url_unescape(entry)
-        slug = tornado.escape.url_escape(entry.decode('utf-8'))
+        #slug = tornado.escape.url_unescape(entry)# .decode('utf-8')
+        slug = tornado.escape.url_escape(entry)
         post = orm.Session().query(Blog).filter_by(slug=slug).first()
         self.write('''<html><body>%s
                     <form action="%s" method="post">
@@ -77,7 +77,7 @@ def make_fixtures():
     session.add(first_post)
     second_post = Blog('Second','I IZ STILL IN UR DATABASE')
     session.add(second_post)
-    uni = Blog(nihao,'unicode '*100)
+    uni = Blog(nihao,'unicode '*10+nihao*10)
     session.add(uni)
 
     session.commit()

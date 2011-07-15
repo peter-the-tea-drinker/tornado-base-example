@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block body %}
+
+<div class="box" style="border:2px solid #DDD">
+<form action="/welcome" method="post" style="padding:5">
+<b>New User</b>
+{% raw xsrf_form_html() %}
+<table>
+    <tr>
+        <td><label for="email">email: </label></td>
+        <td><input style="width:300px" type="text" name="email"></td>
+    </tr>
+    <tr>
+        <td><label for="password">password: </label></td>
+        <td><input style="width:300px" type="password" name="password"></td>
+    </tr>
+</table>
+<input type="submit" value="Submit">
+</form>
+</div>
+<p>
+
+<div class="box" style="border:2px solid #DDD">
+<form action="/login" method="post" style="padding:5">
+<b>Login</b>
+{% raw xsrf_form_html() %}
+<table>
+    <tr>
+        <td><label for="email">email: </label></td>
+        <td><input style="width:300px" type="text" name="email"></td>
+    </tr>
+    <tr>
+        <td><label for="password">password: </label></td>
+        <td><input style="width:300px" type="password" name="password"></td>
+    </tr>
+</table>
+<input type="submit" value="Submit">
+</form>
+</div>
+<p>
+
+<div class="box" style="border:2px solid #DDD">
+<form action="/forgot" method="post" style="padding:5">
+<b>Forgot password</b>
+{% raw xsrf_form_html() %}
+<table>
+    <tr>
+        <td><label for="email">email: </label></td>
+        <td><input style="width:300px" type="text" name="email"></td>
+    </tr>
+</table>
+<input type="submit" value="Submit">
+</form>
+</div>
+{% end %}
+
+

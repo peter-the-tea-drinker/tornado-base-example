@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+Features:
+<ul>
+  <li>Log in with an email and password. I know OpenID (or OpenAuth) is better, but
+      those of us who care have a password manager. Those who
+      don't just use "password1", and hope that nobody guesses.
+      </li><p>
+  <li>bcrypt password hashes. If somebody steals your password database and password salt, 
+  they can't brute-force your users' passwords very quickly.</li><p>
+  <li>Magic tokens, to send to your users for security purposes, or to
+  just drive a couple more page hits by tricking them into thinking somebody 
+  loves them. The internet is cruel :(</li><p>
+  <li>Use async recaptcha to ensure that the bots don't outnumber your customers.</li><p>
+  <p>
+
+</ul>
+{% end %}
+

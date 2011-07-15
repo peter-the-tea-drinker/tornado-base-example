@@ -1,0 +1,77 @@
+{% extends base.html %}
+{% block content %}
+<hr>
+<table border=0><tr><td>
+<form action="/new-user?next={{ url_escape(next_page) }}" 
+    method="post">
+<b>New User</b>
+{% raw xsrf_form_html() %}
+{% if 'new_user_errors' in errors %}
+  {% for error in errors['new_user_errors'] %}
+    <br>{{ error }}
+  {% end %}
+{% end %}
+<table>
+    <tr>
+        <td><label for="email">email: </label></td>
+        <td><input onfocus="onNewUser()" type="text" name="email"></td>
+    </tr>
+    <tr>
+        <td><label for="password">password: </label></td>
+        <td><input type="password" name="password"></td>
+    </tr>
+</table>
+<p>
+<label for="TOS">I accept the <a href="/tos">Terms of Service</a></label>
+<input type="checkbox" name="TOS" value="TOS"><p>
+<label for="CanEmail">Please email me updates.</label>
+<input type="checkbox" name="CanEmail" value="CanEmail" checked><p>
+{% raw new_user_re %}
+<input type="submit" value="Submit">
+</form>
+</table>
+<hr>
+<table>
+<form action="/login?next={{ url_escape(next_page) }}" method="post">
+<b>Current user</b>
+{% raw xsrf_form_html() %}
+{% if 'login_errors' in errors %}
+  {% for error in errors['login_errors'] %}
+    <br>{{ error }}
+  {% end %}
+{% end %}
+<table>
+    <tr>
+        <td><label for="email">email: </label></td>
+        <td><input type="text" name="email"></td>
+    </tr>
+    <tr>
+        <td><label for="password">password: </label></td>
+        <td><input type="password" name="password"></td>
+    </tr>
+</table>
+<input type="submit" value="Submit">
+</form>
+</table>
+<hr>
+<table>
+<form action="/forgot?next={{ url_escape(next_page) }}" method="post"
+    >
+<b>Forgot password</b>
+{% raw xsrf_form_html() %}
+{% if 'forgot_errors' in errors %}
+  {% for error in errors['forgot_errors'] %}
+    <br>{{ error }}
+  {% end %}
+{% end %}
+<table>
+    <tr>
+        <td><label for="email">email: </label></td>
+        <td><input onfocus="onForgot()" type="text" name="email"></td>
+    </tr>
+</table>
+{% raw forgot_re %}
+<input type="submit" value="Submit">
+</form>
+</td></tr></table>
+{% end %}
