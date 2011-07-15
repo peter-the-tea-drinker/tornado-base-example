@@ -18,9 +18,8 @@ import blog.blog
 add_urls(r'/weblog',blog.blog.urls)
 from base import handlers, user
 add_urls('',handlers.urls)
-from mp import TestHandler,TestHandler2
+from mp import TestHandler
 urls.append((r"/test",TestHandler))
-urls.append((r"/test2",TestHandler2))
 
 
 def make_fixtures():

@@ -1,11 +1,12 @@
 def test_func():
     import resource
     import time
+    import bcrypt
     time.sleep(1)
     usage = resource.getrusage(resource.RUSAGE_SELF)
-    return ('this func cost '+str(usage[0]*1000)+'ms user time, '+
-            str(usage[1]*1000)+'ms system, totalling '+
-            str((usage[0]+usage[1])*1000)+'ms.')
+    return ('this func cost about '+str(int(usage[0]*1000))+'ms user time, '+
+            str(int(usage[1]*1000))+'ms system, totalling '+
+            str(int((usage[0]+usage[1])*1000))+'ms.')
 
 if __name__ in '__main__' :
     import sys

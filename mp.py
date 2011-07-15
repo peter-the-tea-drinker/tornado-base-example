@@ -1,6 +1,8 @@
 # for another example of this (without the function wrapping), see 
 # http://brianglass.wordpress.com/2009/11/29/asynchronous-shell-commands-with-tornado/
 
+# todo, investigate multiprocessing. There's bound to be a better way.
+
 def run_process_async(executable_args, callback, input_str=None, path=None):
     """I wonder what happens if you call this with itself as an argument?
     """
@@ -55,6 +57,17 @@ def run_async_func(func, callback, on_error, nice=0, max_CPU_time=-1,
     called fast. For example, don't make sure *they* can be imported without 
     importing too many unneeded things.
 
+    PERFORMANCE NOTE - do not declare your function in the same file as your
+    tornado.web handlers. The new process will then need import tornado.web.
+
+    PATH NOTE - I'm not passing shell around, so the path will be whatever
+    the directory is in. If you want to pass your python path, do it
+    by adding it is an argment to the function, then sys.path.append it.
+    The performance impact will be negligable, compared to the massive costs of
+    spinning up a whole new interpreter.
+
+    TODO - consider "fork". Is it faster?
+
     Given how slow this is (What, no free lunch?), why would you use it?
     If the function you are calling is blocking, but you don't have an
     asyncronous version (as would be the case for a lengthy db query, or 
@@ -85,192 +98,46 @@ def run_async_func(func, callback, on_error, nice=0, max_CPU_time=-1,
         unpickle_callback, input_str = input_str, path = path)
     return clean_up
 
-# TODO - for the subprocess, should we limit CPU use via:
-# os.nice(10)
-# resource.setrlimit(resource.RLIMIT_CPU, (60,60))
-
-import sys
-if __name__ in '__main__' :
-
-    max_CPU_time = int(sys.argv[-1])
-    nice = int(sys.argv[-2])
-
-    if max_CPU_time > 0:
-        import resource
-        resource.setrlimit(resource.RLIMIT_CPU, (max_CPU_time,max_CPU_time))
-    if nice > 0:
-        import os
-        os.nice(nice)
-
-    # note, this *won't* be the case when you unpickle
-    # the test function above - creating a weird bug.
-
-    import cPickle
-    stdout = sys.stdout
-    sys.stdout = sys.stderr # don't let chatty programs mess up my pickles!
-    input_str = sys.stdin.read()
-
-    try:
-        func, args, kwargs = cPickle.loads(input_str)
-        result = func(*args, **kwargs)
-        result_s = cPickle.dumps(result)
-    except Exception, E:
-        try:
-            result_s = cPickle.dumps(E)
-        except PicklingError, PE:
-            result_s = cPickle.dumps(str(E)+'and unable to pickle exception '+str(PE))
-        raise E
-    finally:
-        stdout.write(result_s)
-    '''
-    import sys
-
-    
-    print 'waiting'
-    import time
-    import pickle
-    p = pickle.dumps(pickle.dumps)
-    t=time.time()
-    import sys
-    import cPickle
-    import smtplib
-    sys.stderr.write('Chatchatcah\n')
-    import time
-    #print (time.time()-t)*1000
-    #time.sleep(3)
-    #print 'result!'
-    '''
-
-else:
- if not len(sys.argv) == 4:
-    import tornado.web, sys, run_func
-    class TestHandler(tornado.web.RequestHandler):
-        @tornado.web.asynchronous
-        def get(self):
-            callback = self.oncallback
-            self.clean_up = run_process_async([sys.executable,__file__], callback)
-
-        def oncallback(self, errcode, result):
-            self.write(str(errcode)+result)
-            self.finish()
-
-        def on_connection_close(self):
-            self.clean_up()
-
-
-    class TestHandler2(tornado.web.RequestHandler):
-        @tornado.web.asynchronous
-        def get(self):
-            import time
-            callback = self.oncallback
-            onerror = self.onerror
-            #self.write('<div>please wait <p>'+time.ctime()+'</div>')
-            #self.flush()
-            self.t0=time.time()
-            self.clean_up = run_async_func(run_func.test_func, callback, onerror)
-
-        def oncallback(self, result):
-            import time
-            self.write(str(result))
-            self.write('<p>That took '+str((time.time()-self.t0)*1000)+'ms')
-            self.finish()
-
-        def onerror(self, result):
-            self.write('Error!\n')
-
-            self.write(str(type(result))+'\n')
-            self.write(str(result)+'\n')
-            self.finish()
-
-        def on_connection_close(self):
-            self.clean_up()
-
-
-'''import tornado.web
-import tornado.ioloop
-
-class SubprocessHandler(tornado.web.RequestHandler):
-    def start_subprocess(self, executable_args, callback):
-        from subprocess import Popen, PIPE
-        self.ioloop = tornado.ioloop.IOLoop.instance()
-        self.subprocess = Popen(executable_args, stdout=PIPE)
-        self.ioloop.add_handler(self.subprocess.stdout.fileno(), self.on_read,
-                tornado.ioloop.IOLoop.READ)
-        self.outputs = []
-        self.callback = callback
-
-    def on_read(self, fd, events):
-        self.outputs.append(self.subprocess.stdout.read())
-        print self.outputs[-1]
-        errcode = self.subprocess.poll()
-        if errcode is not None:
-            self.ioloop.remove_handler(self.subprocess.stdout.fileno())
-            self.callback(errcode, self.outputs)
-
-
-class TestHandler(SubprocessHandler):
+# Example usage:
+import tornado.web, sys, run_func
+class _TestHandlerold(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     def get(self):
-        import sys
-        self.start_subprocess((sys.executable,__file__),self.my_callback)
+        callback = self.oncallback
+        self.clean_up = run_process_async([sys.executable,__file__], callback)
 
-    def my_callback(self, errcode, outputs):
-        self.write(str(errcode))
-        for line in outputs:
-            self.write(line)
+    def oncallback(self, errcode, result):
+        self.write(str(errcode)+result)
         self.finish()
 
-def make_(function, ):
-'''
+    def on_connection_close(self):
+        self.clean_up()
 
 
-
-'''
-if __name__ == '__main__':
-
-    import sys
-    #len(sys.argv)
-    #import inspect
-    #this_file = inspect.currentframe().f_code.co_filename
-    if len(sys.argv) == 1:
-        import subprocess
-        import os.path
-        import tornado
+class TestHandler(tornado.web.RequestHandler):
+    @tornado.web.asynchronous
+    def get(self):
         import time
-        import sys
-        n=time.time()
-        #ioloop = tornado.ioloop.IOLoop.instance()
-        #print __file__
-        p = subprocess.Popen([sys.executable,__file__,'!!!!!!!!!!!'],
-                              stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-        print (time.time()-n)*1000,'ms'
-        stdout = p.stdout
-        stdin = p.stdin
-        stdin.write('hihihi\n')
-        stdin.close()
-        print (time.time()-n)*1000,'ms'
-        #stdin.flush()
-        #time.sleep(1)
-        print stdout.read(),
-        stdout.close()
-        print (time.time()-n)*1000,'ms'
-        #stdin.flush()
-        #stdout.flush()
-        #print 'called!',stdout.fileno()
-        #print stdout.readline()
-        #stdin.write('hi')
-        
-        #for l in p.stdout:
-        #    print `l`
-        #time.sleep(3)
-        #stdin.close()
-        #p.wait()
-        #stdin.write('hihi')
-        #print `p.stdout.read()`
-    else:
+        callback = self.oncallback
+        onerror = self.onerror
+        #self.write('<div>please wait <p>'+time.ctime()+'</div>')
+        #self.flush()
+        self.t0=time.time()
+        self.clean_up = run_async_func(run_func.test_func, callback, onerror)
+
+    def oncallback(self, result):
         import time
-        import sys
-        import smtplib
-        s = sys.stdin.read()
-        print s+'done'
-        sys.stdout.flush()'''
+        self.write(str(result))
+        self.write('<p>That took '+str((time.time()-self.t0)*1000)+'ms')
+        self.finish()
+
+    def onerror(self, result):
+        self.write('Error!\n')
+
+        self.write(str(type(result))+'\n')
+        self.write(str(result)+'\n')
+        self.finish()
+
+    def on_connection_close(self):
+        self.clean_up()
+
