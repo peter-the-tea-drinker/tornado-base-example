@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+Id: {{ user.id }}<br>
+Name: {{ user.name }}<br>
+Email: {{ user.email }}<br>
+Is_valid: {{ user.valid }}<br>
+Password: ****<br>
+Permissions: {{ user.permissions }}<br>
+Can_email: {{ user.can_spam }}<br>
+{% end %}
+

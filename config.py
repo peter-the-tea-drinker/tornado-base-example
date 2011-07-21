@@ -5,14 +5,14 @@ import os,sys
 VIRTUAL_ENV = "~/env/bin/python"
 
 DB = 'sqlite:///:memory:'
-BASE_DIR = '~/tornado-base'
+TBONE_DIR = '~/TBone'
 
 COOKIE_SECRET ="CISFORCOO23ETHAT'SNO4546%$@GHFORMEOHLOOKSHINEYTHINGSISTHATENO"
 BCRYPT_SALT = '$2a$12$pmo745pf7A.t164vP2pTle'
 
 ADMIN = 'peter.row@gmail.com'
 
-sys.path.append(os.path.expanduser(BASE_DIR))
+sys.path.append(os.path.expanduser(TBONE_DIR))
 
 STATIC = os.path.join(os.path.dirname(__file__),'static')
 
@@ -31,26 +31,27 @@ email_secure = True
 magic_token_url='peter-the-tea-drinker.com/m/'
 
 TEMPLATE = os.path.join(os.path.dirname(__file__),'template')
-
+CA_CERTS='../Certificates.pem'
 
 # These are only needed by fab
-APP_REPO = 'git://github.com/peter-the-tea-drinker/tornado-base-example.git'
+APP_REPO = 'git://github.com/peter-the-tea-drinker/ExampleTBone.git'
 APP_TAG = ''
 
 PROD_APP_DIR = '~/peter-the-tea-drinker.com'
 STAGE_APP_DIR = '~/peter-the-tea-drinker.com'
 
-BASE_REPO = 'git://github.com/peter-the-tea-drinker/tornado-base.git'
-BASE_TAG = ''
+TBONE_REPO = 'git://github.com/peter-the-tea-drinker/ExampleTBone.git'
+TBONE_TAG = ''
 
-LOCAL_BASE_DIR = '~/repos/tornado-base'
-LOCAL_APP_DIR = '~/repos/tornado-base-example'
+LOCAL_TBONE_DIR = '~/repos/TBone'
+LOCAL_APP_DIR = '~/repos/ExampleTBone'
 
 sys.path.append(os.path.expanduser(LOCAL_APP_DIR))
-sys.path.append(os.path.expanduser(LOCAL_BASE_DIR))
+sys.path.append(os.path.expanduser(LOCAL_TBONE_DIR))
 
 # global RECAPTCHA keys, from https://www.google.com/recaptcha/admin/create
 # don't use them. Make your own. These are just for development. 
+# leave blank for no re-captcha
 PUBLIC_RE_KEY = '6LccF8YSAAAAAL1OzoFUMq4gOSjnndh4rl62uH5c'
 PRIVATE_RE_KEY = '6LccF8YSAAAAAKX28tyU9imyorOYTE4-CET8fygZ'
 

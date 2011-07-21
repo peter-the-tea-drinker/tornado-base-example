@@ -1,6 +1,6 @@
 import config
-from base.user import get_user
-from base.appbase import orm
+from tbone.user import get_user
+from tbone.appbase import orm
 import sqlalchemy as s
 
 class Blog(orm.Base):

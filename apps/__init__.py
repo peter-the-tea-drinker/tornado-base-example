@@ -1,2 +1,2 @@
-import account.handlers
-import about.handlers
+import about
+import account
